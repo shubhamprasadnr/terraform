@@ -8,6 +8,7 @@ REGION = 'ap-south-1'  # Replace with your desired AWS region
 PEM_KEY_PATH = 'private-key.pem'  # Path to your PEM file
 TAG_NAME = 'Name'  # Tag key (we are using 'kafka' as the key)
 TAG_VALUE = 'kafka'  # Tag value to filter instances (adjust as needed)
+ANSIBLE_USER ='ubuntu'
 
 
 def get_local_ip():
@@ -64,7 +65,7 @@ def fetch_ec2_instances(local_ip):
                     inventory["_meta"]["hostvars"][label] = {
                         "ansible_host": public_ip,
                         "ansible_ssh_private_key_file": PEM_KEY_PATH
-                         "ansible_user": "ubuntu" 
+                         "ansible_user": "ubuntu"
                     }
                     label_counter += 1
 
