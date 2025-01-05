@@ -1,0 +1,23 @@
+---
+- name: Install and configure Nginx
+  hosts: all  # This targets all hosts in the inventory
+  become: true  # Use privilege escalation (sudo) to install packages
+
+  tasks:
+    - name: Ensure Nginx is installed
+      apt:
+        name: nginx
+        state: present
+        update_cache: yes  # Update the apt package cache before installing
+    
+    - name: Start and enable Nginx service
+      systemd:
+        name: nginx
+        state: started
+        enabled: yes  # Ensure that Nginx starts on boot
+    
+    - name: Ensure Nginx is running
+      service:
+        name: nginx
+        state: started  # Ensure the Nginx service is running
+        enabled: yes  # Ensure it is enabled to start on boot
