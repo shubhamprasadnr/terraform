@@ -1,0 +1,74 @@
+pipeline {
+    agent any
+    
+    
+    
+    environment{
+        AWS_ACCESS_KEY_ID = '
+        AWS_SECRET_ACCESS_KEY = ''
+        AWS_DEFAULT_REGION = ''
+        ANSIBLE_USER = 'ubuntu'
+        
+    }
+    stages {
+        stage('Clean Workspace') {
+            steps {
+                script {
+                    // Clean the workspace at the beginning of the build
+                    cleanWs()
+                }
+            }
+        }
+        
+        stage('git') {
+            steps {
+                git branch: 'main', url: 'https://github.com/shubhamprasadnr/terraform.git'
+            }
+        }
+        
+         stage('install_ansible') {
+            steps {
+                  sh ' sudo apt update && sudo apt install ansible -y ' 
+                 sh 'sudo apt install python3-pip'
+                //   sh 'python3 -m venv myenv'
+                //  sh 'myenv/bin/activate'
+                 
+                //  sh'pip install boto3 botocore'
+            }
+        }
+        
+         stage('create_virtualenv') {
+            steps {
+                sh '''
+                    python3 -m venv myenv
+                    . myenv/bin/activate
+                    pip install boto3 botocore
+                '''
+            }
+        }
+        
+          stage('runscript') {
+            steps {
+                sh 'sudo chmod 777 dynamic_inventory.py'
+                sh 'python3 dynamic_inventory.py --list'
+            }
+        }
+        
+        stage('ping') {
+            steps {
+                // sh 'ssh-keyscan kafka>> ~/.ssh/known_hosts'
+                
+                 sh 'sudo chmod 400 private-key.pem'
+                sh 'ansible all -i dynamic_inventory.py -m ping --user ubuntu'
+            }
+        }
+        
+        stage('install_nginx') {
+            steps {
+                
+                sh 'ansible-playbook -idynamic_inventory.py nginx.yml --user ubuntu'
+                
+            }
+        }
+    }
+}
