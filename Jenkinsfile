@@ -9,7 +9,7 @@ pipeline {
     stages {
         stage('git checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/YugeshKumar01/kafka_roles-Dynamic_inventory.git'
+                git branch: 'main', url: 'https://github.com/shubhamprasadnr/terraform.git'
             }
         }
     
